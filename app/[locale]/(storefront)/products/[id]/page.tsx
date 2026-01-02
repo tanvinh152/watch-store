@@ -14,6 +14,7 @@ import { Card, CardContent } from '@/components/ui/card';
 import { Separator } from '@/components/ui/separator';
 import { Product } from '@/types';
 import { formatPrice } from '@/lib/utils';
+import { getTranslations } from 'next-intl/server';
 
 interface ProductPageProps {
   params: Promise<{ id: string }>;
@@ -120,7 +121,8 @@ async function getOtherProducts(
 }
 
 // Product Card Component
-function ProductCard({ product }: { product: Product }) {
+async function ProductCard({ product }: { product: Product }) {
+  const t = await getTranslations('ProductDetail');
   const displayPrice = product.sale_price ?? product.price;
   const hasDiscount = product.sale_price !== null;
 
@@ -147,12 +149,13 @@ function ProductCard({ product }: { product: Product }) {
                 variant="destructive"
                 className="absolute top-2 left-2 text-xs font-semibold"
               >
-                {Math.round(
-                  ((product.price - (product.sale_price || 0)) /
-                    product.price) *
-                    100
-                )}
-                % OFF
+                {t('off', {
+                  percent: Math.round(
+                    ((product.price - (product.sale_price || 0)) /
+                      product.price) *
+                      100
+                  ),
+                })}
               </Badge>
             )}
             {/* Quick view overlay */}
@@ -183,7 +186,7 @@ function ProductCard({ product }: { product: Product }) {
 }
 
 // Related Products Section Component
-function RelatedProductsSection({
+async function RelatedProductsSection({
   title,
   subtitle,
   products,
@@ -194,6 +197,7 @@ function RelatedProductsSection({
   products: Product[];
   viewAllLink?: string;
 }) {
+  const t = await getTranslations('ProductDetail');
   if (products.length === 0) return null;
 
   return (
@@ -205,7 +209,7 @@ function RelatedProductsSection({
         </div>
         {viewAllLink && (
           <Button variant="outline" asChild className="hidden sm:flex">
-            <Link href={viewAllLink}>View All</Link>
+            <Link href={viewAllLink}>{t('viewAll')}</Link>
           </Button>
         )}
       </div>
@@ -219,7 +223,7 @@ function RelatedProductsSection({
       {viewAllLink && (
         <div className="mt-6 flex justify-center sm:hidden">
           <Button variant="outline" asChild>
-            <Link href={viewAllLink}>View All</Link>
+            <Link href={viewAllLink}>{t('viewAll')}</Link>
           </Button>
         </div>
       )}
@@ -229,6 +233,7 @@ function RelatedProductsSection({
 
 export default async function ProductPage({ params }: ProductPageProps) {
   const { id } = await params;
+  const t = await getTranslations('ProductDetail');
   const product = await getProduct(id);
 
   if (!product) {
@@ -283,14 +288,14 @@ export default async function ProductPage({ params }: ProductPageProps) {
                 className="hover:text-foreground flex items-center gap-1 transition-colors"
               >
                 <Home className="h-4 w-4" />
-                <span className="hidden sm:inline">Home</span>
+                <span className="hidden sm:inline">{t('home')}</span>
               </Link>
               <ChevronRight className="h-4 w-4" />
               <Link
                 href="/products"
                 className="hover:text-foreground transition-colors"
               >
-                Products
+                {t('products')}
               </Link>
               <ChevronRight className="h-4 w-4" />
               <span className="text-foreground max-w-[200px] truncate font-medium">
@@ -300,7 +305,7 @@ export default async function ProductPage({ params }: ProductPageProps) {
             <Button variant="ghost" size="sm" asChild className="gap-2">
               <Link href="/products">
                 <ArrowLeft className="h-4 w-4" />
-                <span className="hidden sm:inline">Back to Products</span>
+                <span className="hidden sm:inline">{t('backToProducts')}</span>
               </Link>
             </Button>
           </div>
@@ -334,8 +339,8 @@ export default async function ProductPage({ params }: ProductPageProps) {
         {/* More from Brand */}
         {sameBrandProducts.length > 0 && (
           <RelatedProductsSection
-            title={`More from ${product.brand}`}
-            subtitle="Explore other timepieces from this prestigious collection"
+            title={t('moreFrom', { brand: product.brand })}
+            subtitle={t('moreFromSubtitle')}
             products={sameBrandProducts}
             viewAllLink={`/products?brand=${encodeURIComponent(product.brand)}`}
           />
@@ -344,8 +349,8 @@ export default async function ProductPage({ params }: ProductPageProps) {
         {/* Similar Price Range */}
         {similarPriceProducts.length > 0 && (
           <RelatedProductsSection
-            title="Similar Price Range"
-            subtitle="Discover watches with comparable value"
+            title={t('similarPrice')}
+            subtitle={t('similarPriceSubtitle')}
             products={similarPriceProducts}
           />
         )}
@@ -353,8 +358,8 @@ export default async function ProductPage({ params }: ProductPageProps) {
         {/* You May Also Like */}
         {otherProducts.length > 0 && (
           <RelatedProductsSection
-            title="You May Also Like"
-            subtitle="Hand-picked selections for watch enthusiasts"
+            title={t('youMayAlsoLike')}
+            subtitle={t('youMayAlsoLikeSubtitle')}
             products={otherProducts}
             viewAllLink="/products"
           />
@@ -363,35 +368,39 @@ export default async function ProductPage({ params }: ProductPageProps) {
         {/* Product Guarantee Section */}
         <div className="bg-muted/50 mt-8 rounded-2xl p-8 md:p-12">
           <div className="mx-auto max-w-3xl text-center">
-            <h3 className="mb-4 text-2xl font-bold">Our Promise to You</h3>
+            <h3 className="mb-4 text-2xl font-bold">{t('promiseTitle')}</h3>
             <p className="text-muted-foreground mb-8">
-              Every timepiece in our collection is carefully curated and
-              authenticated. We stand behind the quality of our watches with
-              comprehensive guarantees.
+              {t('promiseDescription')}
             </p>
             <div className="grid grid-cols-2 gap-6 md:grid-cols-4">
               <div className="text-center">
                 <div className="text-primary text-3xl font-bold">100%</div>
                 <div className="text-muted-foreground mt-1 text-sm">
-                  Authentic
+                  {t('authentic')}
                 </div>
               </div>
               <div className="text-center">
-                <div className="text-primary text-3xl font-bold">2 Years</div>
+                <div className="text-primary text-3xl font-bold">
+                  {t('years', { count: 2 })}
+                </div>
                 <div className="text-muted-foreground mt-1 text-sm">
-                  Warranty
+                  {t('warranty')}
                 </div>
               </div>
               <div className="text-center">
-                <div className="text-primary text-3xl font-bold">30 Days</div>
+                <div className="text-primary text-3xl font-bold">
+                  {t('days', { count: 30 })}
+                </div>
                 <div className="text-muted-foreground mt-1 text-sm">
-                  Returns
+                  {t('returns')}
                 </div>
               </div>
               <div className="text-center">
-                <div className="text-primary text-3xl font-bold">Free</div>
+                <div className="text-primary text-3xl font-bold">
+                  {t('free')}
+                </div>
                 <div className="text-muted-foreground mt-1 text-sm">
-                  Shipping
+                  {t('shipping')}
                 </div>
               </div>
             </div>
@@ -404,19 +413,20 @@ export default async function ProductPage({ params }: ProductPageProps) {
 
 export async function generateMetadata({ params }: ProductPageProps) {
   const { id } = await params;
+  const t = await getTranslations('ProductDetail');
   const product = await getProduct(id);
 
   if (!product) {
     return {
-      title: 'Product Not Found',
+      title: t('productNotFound'),
     };
   }
 
   return {
-    title: `${product.name} by ${product.brand} | Watch Store`,
+    title: t('metaTitle', { name: product.name, brand: product.brand }),
     description:
       product.description ||
-      `Discover the ${product.brand} ${product.name}. Premium timepiece with exceptional craftsmanship.`,
+      t('discover', { brand: product.brand, name: product.name }),
     openGraph: {
       title: product.name,
       description: product.description || `${product.brand} ${product.name}`,

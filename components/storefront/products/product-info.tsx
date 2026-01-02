@@ -19,12 +19,14 @@ import { Product } from '@/types';
 import { useCart } from '@/hooks';
 import { toast } from 'sonner';
 import { formatPrice } from '@/lib/utils';
+import { useTranslations } from 'next-intl';
 
 interface ProductInfoProps {
   product: Product;
 }
 
 export function ProductInfo({ product }: ProductInfoProps) {
+  const t = useTranslations('ProductInfo');
   const [quantity, setQuantity] = useState(1);
   const { addToCart } = useCart();
 
@@ -38,7 +40,7 @@ export function ProductInfo({ product }: ProductInfoProps) {
 
   const handleAddToCart = () => {
     addToCart(product, quantity);
-    toast.success(`${quantity} x ${product.name} added to cart`);
+    toast.success(t('addedToCart', { quantity, name: product.name }));
   };
 
   const decreaseQuantity = () => {
@@ -67,14 +69,14 @@ export function ProductInfo({ product }: ProductInfoProps) {
             className="bg-green-100 text-green-700 hover:bg-green-100"
           >
             <Check className="mr-1 h-3 w-3" />
-            In Stock
+            {t('inStock')}
           </Badge>
         ) : (
           <Badge
             variant="secondary"
             className="bg-red-100 text-red-700 hover:bg-red-100"
           >
-            Out of Stock
+            {t('outOfStock')}
           </Badge>
         )}
       </div>
@@ -85,7 +87,7 @@ export function ProductInfo({ product }: ProductInfoProps) {
           {product.name}
         </h1>
         <p className="text-muted-foreground mt-2">
-          Reference: {product.slug.toUpperCase()}
+          {t('reference')}: {product.slug.toUpperCase()}
         </p>
       </div>
 
@@ -101,14 +103,16 @@ export function ProductInfo({ product }: ProductInfoProps) {
                 {formatPrice(product.price)}
               </span>
               <Badge variant="destructive" className="text-sm font-semibold">
-                Save {discountPercent}%
+                {t('save', { percent: discountPercent })}
               </Badge>
             </>
           )}
         </div>
         {hasDiscount && (
           <p className="mt-2 text-sm font-medium text-green-600">
-            You save {formatPrice(product.price - (product.sale_price || 0))}
+            {t('youSave', {
+              amount: formatPrice(product.price - (product.sale_price || 0)),
+            })}
           </p>
         )}
       </div>
@@ -116,7 +120,7 @@ export function ProductInfo({ product }: ProductInfoProps) {
       {/* Description */}
       {product.description && (
         <div>
-          <h3 className="mb-3 text-lg font-semibold">About This Watch</h3>
+          <h3 className="mb-3 text-lg font-semibold">{t('about')}</h3>
           <p className="text-muted-foreground leading-relaxed">
             {product.description}
           </p>
@@ -134,7 +138,7 @@ export function ProductInfo({ product }: ProductInfoProps) {
                 {product.specs_json.caseDiameter}
               </p>
               <p className="text-muted-foreground text-xs tracking-wide uppercase">
-                Case Size
+                {t('caseSize')}
               </p>
             </div>
           )}
@@ -142,7 +146,7 @@ export function ProductInfo({ product }: ProductInfoProps) {
             <div className="bg-muted/30 rounded-lg p-3 text-center">
               <p className="text-sm font-bold">{product.specs_json.movement}</p>
               <p className="text-muted-foreground text-xs tracking-wide uppercase">
-                Movement
+                {t('movement')}
               </p>
             </div>
           )}
@@ -152,7 +156,7 @@ export function ProductInfo({ product }: ProductInfoProps) {
                 {product.specs_json.waterResistance}
               </p>
               <p className="text-muted-foreground text-xs tracking-wide uppercase">
-                Water Resist
+                {t('waterResist')}
               </p>
             </div>
           )}
@@ -162,7 +166,7 @@ export function ProductInfo({ product }: ProductInfoProps) {
                 {product.specs_json.caseMaterial}
               </p>
               <p className="text-muted-foreground text-xs tracking-wide uppercase">
-                Material
+                {t('material')}
               </p>
             </div>
           )}
@@ -174,7 +178,7 @@ export function ProductInfo({ product }: ProductInfoProps) {
       {/* Quantity & Add to Cart */}
       <div className="space-y-4">
         <div className="flex items-center gap-4">
-          <span className="text-sm font-medium">Quantity:</span>
+          <span className="text-sm font-medium">{t('quantity')}:</span>
           <div className="flex items-center overflow-hidden rounded-lg border">
             <Button
               variant="ghost"
@@ -207,13 +211,13 @@ export function ProductInfo({ product }: ProductInfoProps) {
             disabled={!product.stock_status}
           >
             <ShoppingCart className="h-5 w-5" />
-            Add to Cart
+            {t('addToCart')}
           </Button>
           <Button
             size="lg"
             variant="outline"
             className="h-14 w-14"
-            title="Add to Wishlist"
+            title={t('addToWishlist')}
           >
             <Heart className="h-5 w-5" />
           </Button>
@@ -227,8 +231,8 @@ export function ProductInfo({ product }: ProductInfoProps) {
             <Shield className="text-primary h-5 w-5" />
           </div>
           <div>
-            <p className="text-sm font-semibold">Authentic</p>
-            <p className="text-muted-foreground text-xs">100% Genuine</p>
+            <p className="text-sm font-semibold">{t('authentic')}</p>
+            <p className="text-muted-foreground text-xs">{t('genuine')}</p>
           </div>
         </div>
         <div className="flex items-center gap-3 rounded-lg border p-3">
@@ -236,8 +240,10 @@ export function ProductInfo({ product }: ProductInfoProps) {
             <Truck className="text-primary h-5 w-5" />
           </div>
           <div>
-            <p className="text-sm font-semibold">Free Shipping</p>
-            <p className="text-muted-foreground text-xs">Insured Delivery</p>
+            <p className="text-sm font-semibold">{t('freeShipping')}</p>
+            <p className="text-muted-foreground text-xs">
+              {t('insuredDelivery')}
+            </p>
           </div>
         </div>
         <div className="flex items-center gap-3 rounded-lg border p-3">
@@ -245,8 +251,8 @@ export function ProductInfo({ product }: ProductInfoProps) {
             <RotateCcw className="text-primary h-5 w-5" />
           </div>
           <div>
-            <p className="text-sm font-semibold">Easy Returns</p>
-            <p className="text-muted-foreground text-xs">30-Day Policy</p>
+            <p className="text-sm font-semibold">{t('easyReturns')}</p>
+            <p className="text-muted-foreground text-xs">{t('policy')}</p>
           </div>
         </div>
         <div className="flex items-center gap-3 rounded-lg border p-3">
@@ -254,7 +260,7 @@ export function ProductInfo({ product }: ProductInfoProps) {
             <Award className="text-primary h-5 w-5" />
           </div>
           <div>
-            <p className="text-sm font-semibold">Warranty</p>
+            <p className="text-sm font-semibold">{t('warranty')}</p>
             <p className="text-muted-foreground text-xs">
               {product.specs_json?.warranty || '2 Years'}
             </p>

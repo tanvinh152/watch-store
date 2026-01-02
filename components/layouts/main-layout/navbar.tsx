@@ -1,6 +1,6 @@
 'use client';
 
-import { Link } from '@/i18n/routing';
+import { Link, usePathname } from '@/i18n/routing';
 import { ShoppingCart, Menu, Watch } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Sheet, SheetContent, SheetTrigger } from '@/components/ui/sheet';
@@ -10,6 +10,7 @@ import { useState } from 'react';
 import { CartDrawer } from '@/components/storefront/cart/cart-drawer';
 import { useTranslations } from 'next-intl';
 import { LanguageSwitcher } from '@/components/language-switcher';
+import { cn } from '@/lib/utils';
 
 const navLinks = [
   { href: '/', label: 'home' },
@@ -20,6 +21,7 @@ export function Navbar() {
   const { count, isOpen, toggle } = useCart();
   const [mobileOpen, setMobileOpen] = useState(false);
   const t = useTranslations('Navbar');
+  const pathname = usePathname();
 
   return (
     <header className="bg-background/95 supports-[backdrop-filter]:bg-background/60 sticky top-0 z-50 w-full border-b backdrop-blur">
@@ -32,15 +34,25 @@ export function Navbar() {
 
         {/* Desktop Navigation */}
         <nav className="hidden items-center gap-6 md:flex">
-          {navLinks.map((link) => (
-            <Link
-              key={link.href}
-              href={link.href}
-              className="hover:text-primary text-sm font-medium transition-colors"
-            >
-              {t(link.label)}
-            </Link>
-          ))}
+          {navLinks.map((link) => {
+            const isActive =
+              link.href === '/'
+                ? pathname === '/'
+                : pathname.startsWith(link.href);
+
+            return (
+              <Link
+                key={link.href}
+                href={link.href}
+                className={cn(
+                  'hover:text-primary text-sm font-medium transition-colors',
+                  isActive ? 'text-primary' : 'text-muted-foreground'
+                )}
+              >
+                {t(link.label)}
+              </Link>
+            );
+          })}
         </nav>
 
         {/* Cart & Mobile Menu */}
@@ -79,16 +91,26 @@ export function Navbar() {
                 <div className="mb-4">
                   <LanguageSwitcher />
                 </div>
-                {navLinks.map((link) => (
-                  <Link
-                    key={link.href}
-                    href={link.href}
-                    className="hover:text-primary text-lg font-medium transition-colors"
-                    onClick={() => setMobileOpen(false)}
-                  >
-                    {t(link.label)}
-                  </Link>
-                ))}
+                {navLinks.map((link) => {
+                  const isActive =
+                    link.href === '/'
+                      ? pathname === '/'
+                      : pathname.startsWith(link.href);
+
+                  return (
+                    <Link
+                      key={link.href}
+                      href={link.href}
+                      className={cn(
+                        'hover:text-primary text-lg font-medium transition-colors',
+                        isActive ? 'text-primary' : 'text-muted-foreground'
+                      )}
+                      onClick={() => setMobileOpen(false)}
+                    >
+                      {t(link.label)}
+                    </Link>
+                  );
+                })}
               </div>
             </SheetContent>
           </Sheet>

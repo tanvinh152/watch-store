@@ -1,21 +1,22 @@
 'use client';
 
 import { useState } from 'react';
-import { 
-  Watch, 
-  Gauge, 
-  Settings, 
-  Droplets, 
-  Gem, 
+import {
+  Watch,
+  Gauge,
+  Settings,
+  Droplets,
+  Gem,
   Ribbon,
   Award,
   ChevronDown,
-  ChevronUp
+  ChevronUp,
 } from 'lucide-react';
 import { ProductSpecs as ProductSpecsType } from '@/types';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { cn } from '@/lib/utils';
+import { useTranslations } from 'next-intl';
 
 interface ProductSpecsProps {
   specs: ProductSpecsType | null;
@@ -24,57 +25,42 @@ interface ProductSpecsProps {
 
 interface SpecItem {
   key: keyof ProductSpecsType;
-  label: string;
   icon: React.ElementType;
-  description: string;
 }
 
 const specConfig: SpecItem[] = [
-  { 
-    key: 'caseMaterial', 
-    label: 'Case Material', 
+  {
+    key: 'caseMaterial',
     icon: Watch,
-    description: 'The material used in constructing the watch case'
   },
-  { 
-    key: 'caseDiameter', 
-    label: 'Case Diameter', 
+  {
+    key: 'caseDiameter',
     icon: Gauge,
-    description: 'The width of the watch case measured in millimeters'
   },
-  { 
-    key: 'movement', 
-    label: 'Movement', 
+  {
+    key: 'movement',
     icon: Settings,
-    description: 'The type of mechanism that powers the watch'
   },
-  { 
-    key: 'waterResistance', 
-    label: 'Water Resistance', 
+  {
+    key: 'waterResistance',
     icon: Droplets,
-    description: 'The level of protection against water exposure'
   },
-  { 
-    key: 'crystal', 
-    label: 'Crystal', 
+  {
+    key: 'crystal',
     icon: Gem,
-    description: 'The transparent cover protecting the dial'
   },
-  { 
-    key: 'strapMaterial', 
-    label: 'Strap Material', 
+  {
+    key: 'strapMaterial',
     icon: Ribbon,
-    description: 'The material used for the watch band'
   },
-  { 
-    key: 'warranty', 
-    label: 'Warranty', 
+  {
+    key: 'warranty',
     icon: Award,
-    description: 'Manufacturer warranty coverage period'
   },
 ];
 
 export function ProductSpecs({ specs, description }: ProductSpecsProps) {
+  const t = useTranslations('ProductSpecs');
   const [isExpanded, setIsExpanded] = useState(false);
 
   if (!specs) return null;
@@ -88,39 +74,35 @@ export function ProductSpecs({ specs, description }: ProductSpecsProps) {
   const visibleSpecs = isExpanded ? availableSpecs : availableSpecs.slice(0, 4);
 
   return (
-    <Card className="border-0 shadow-none bg-transparent">
+    <Card className="border-0 bg-transparent shadow-none">
       <CardHeader className="px-0 pt-0">
-        <CardTitle className="text-2xl font-bold flex items-center gap-3">
-          <div className="p-2 bg-primary/10 rounded-lg">
-            <Settings className="h-6 w-6 text-primary" />
+        <CardTitle className="flex items-center gap-3 text-2xl font-bold">
+          <div className="bg-primary/10 rounded-lg p-2">
+            <Settings className="text-primary h-6 w-6" />
           </div>
-          Technical Specifications
+          {t('title')}
         </CardTitle>
-        <p className="text-muted-foreground mt-2">
-          Every detail matters. Explore the precise specifications that make this timepiece exceptional.
-        </p>
+        <p className="text-muted-foreground mt-2">{t('subtitle')}</p>
       </CardHeader>
       <CardContent className="px-0">
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+        <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
           {visibleSpecs.map((item) => {
             const Icon = item.icon;
             const value = specs[item.key];
-            
+
             return (
               <div
                 key={item.key}
-                className="group relative flex items-start gap-4 p-4 rounded-xl border bg-card hover:bg-muted/50 transition-colors"
+                className="group bg-card hover:bg-muted/50 relative flex items-start gap-4 rounded-xl border p-4 transition-colors"
               >
-                <div className="flex-shrink-0 p-3 bg-muted rounded-lg group-hover:bg-background transition-colors">
-                  <Icon className="h-5 w-5 text-muted-foreground" />
+                <div className="bg-muted group-hover:bg-background flex-shrink-0 rounded-lg p-3 transition-colors">
+                  <Icon className="text-muted-foreground h-5 w-5" />
                 </div>
-                <div className="flex-1 min-w-0">
-                  <p className="text-xs text-muted-foreground uppercase tracking-wide font-medium">
-                    {item.label}
+                <div className="min-w-0 flex-1">
+                  <p className="text-muted-foreground text-xs font-medium tracking-wide uppercase">
+                    {t(item.key)}
                   </p>
-                  <p className="text-lg font-semibold mt-1 truncate">
-                    {value}
-                  </p>
+                  <p className="mt-1 truncate text-lg font-semibold">{value}</p>
                 </div>
               </div>
             );
@@ -128,7 +110,7 @@ export function ProductSpecs({ specs, description }: ProductSpecsProps) {
         </div>
 
         {availableSpecs.length > 4 && (
-          <div className="flex justify-center mt-6">
+          <div className="mt-6 flex justify-center">
             <Button
               variant="outline"
               onClick={() => setIsExpanded(!isExpanded)}
@@ -136,12 +118,12 @@ export function ProductSpecs({ specs, description }: ProductSpecsProps) {
             >
               {isExpanded ? (
                 <>
-                  Show Less
+                  {t('showLess')}
                   <ChevronUp className="h-4 w-4" />
                 </>
               ) : (
                 <>
-                  View All Specifications
+                  {t('viewAll')}
                   <ChevronDown className="h-4 w-4" />
                 </>
               )}
@@ -151,8 +133,10 @@ export function ProductSpecs({ specs, description }: ProductSpecsProps) {
 
         {/* Description Section */}
         {description && (
-          <div className="mt-8 p-6 bg-muted/30 rounded-xl">
-            <h4 className="font-semibold text-lg mb-3">Product Details</h4>
+          <div className="bg-muted/30 mt-8 rounded-xl p-6">
+            <h4 className="mb-3 text-lg font-semibold">
+              {t('productDetails')}
+            </h4>
             <p className="text-muted-foreground leading-relaxed whitespace-pre-line">
               {description}
             </p>
