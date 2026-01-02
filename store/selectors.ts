@@ -15,14 +15,15 @@ export const selectCartTotal = (state: RootState) =>
 export const selectSelectedBrands = (state: RootState) =>
   state.filter.selectedBrands;
 export const selectPriceRange = (state: RootState) => state.filter.priceRange;
+export const selectSearchQuery = (state: RootState) => state.filter.searchQuery;
 export const selectHasActiveFilters = (state: RootState) =>
   state.filter.selectedBrands.length > 0 ||
   state.filter.priceRange.min > 0 ||
-  state.filter.priceRange.max !== null;
+  state.filter.priceRange.max !== null ||
+  state.filter.searchQuery.length > 0;
 
 // UI selectors
 export const selectIsMobileMenuOpen = (state: RootState) =>
   state.ui.isMobileMenuOpen;
 export const selectActiveModal = (state: RootState) => state.ui.activeModal;
 export const selectGlobalLoading = (state: RootState) => state.ui.globalLoading;
-

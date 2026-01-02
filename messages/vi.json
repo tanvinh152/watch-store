@@ -13,7 +13,9 @@
     "minPrice": "Giá thấp nhất",
     "maxPrice": "Giá cao nhất",
     "clearFilters": "Xóa bộ lọc",
-    "clearAll": "Xóa tất cả"
+    "clearAll": "Xóa tất cả",
+    "search": "Tìm kiếm",
+    "searchPlaceholder": "Tìm kiếm theo tên hoặc thương hiệu..."
   },
   "Common": {
     "loading": "Đang tải..."

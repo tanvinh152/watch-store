@@ -6,6 +6,7 @@ interface FilterState {
     min: number;
     max: number | null;
   };
+  searchQuery: string;
 }
 
 const initialState: FilterState = {
@@ -14,6 +15,7 @@ const initialState: FilterState = {
     min: 0,
     max: null,
   },
+  searchQuery: '',
 };
 
 const filterSlice = createSlice({
@@ -42,15 +44,23 @@ const filterSlice = createSlice({
         state.priceRange.max = action.payload.max;
       }
     },
+    setSearchQuery: (state, action: PayloadAction<string>) => {
+      state.searchQuery = action.payload;
+    },
     clearFilters: (state) => {
       state.selectedBrands = [];
       state.priceRange = { min: 0, max: null };
+      state.searchQuery = '';
     },
   },
 });
 
-export const { toggleBrand, setBrands, setPriceRange, clearFilters } =
-  filterSlice.actions;
+export const {
+  toggleBrand,
+  setBrands,
+  setPriceRange,
+  setSearchQuery,
+  clearFilters,
+} = filterSlice.actions;
 
 export default filterSlice.reducer;
-

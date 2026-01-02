@@ -6,11 +6,13 @@ import {
   toggleBrand,
   setBrands,
   setPriceRange,
+  setSearchQuery,
   clearFilters,
 } from '@/store/slices/filter.slice';
 import {
   selectSelectedBrands,
   selectPriceRange,
+  selectSearchQuery,
   selectHasActiveFilters,
 } from '@/store/selectors';
 
@@ -18,6 +20,7 @@ export function useFilters() {
   const dispatch = useDispatch<AppDispatch>();
   const selectedBrands = useSelector(selectSelectedBrands);
   const priceRange = useSelector(selectPriceRange);
+  const searchQuery = useSelector(selectSearchQuery);
   const hasActiveFilters = useSelector(selectHasActiveFilters);
 
   const handleToggleBrand = (brand: string) => {
@@ -28,8 +31,15 @@ export function useFilters() {
     dispatch(setBrands(brands));
   };
 
-  const handleSetPriceRange = (range: { min?: number; max?: number | null }) => {
+  const handleSetPriceRange = (range: {
+    min?: number;
+    max?: number | null;
+  }) => {
     dispatch(setPriceRange(range));
+  };
+
+  const handleSetSearchQuery = (query: string) => {
+    dispatch(setSearchQuery(query));
   };
 
   const handleClearFilters = () => {
@@ -39,11 +49,12 @@ export function useFilters() {
   return {
     selectedBrands,
     priceRange,
+    searchQuery,
     hasActiveFilters,
     toggleBrand: handleToggleBrand,
     setBrands: handleSetBrands,
     setPriceRange: handleSetPriceRange,
+    setSearchQuery: handleSetSearchQuery,
     clearFilters: handleClearFilters,
   };
 }
-

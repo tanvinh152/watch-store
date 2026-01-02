@@ -13,7 +13,9 @@
     "minPrice": "Min Price",
     "maxPrice": "Max Price",
     "clearFilters": "Clear Filters",
-    "clearAll": "Clear all"
+    "clearAll": "Clear all",
+    "search": "Search",
+    "searchPlaceholder": "Search by name or brand..."
   },
   "Common": {
     "loading": "Loading..."

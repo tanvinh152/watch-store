@@ -10,12 +10,23 @@ interface ProductGridClientProps {
 }
 
 export function ProductGridClient({ products }: ProductGridClientProps) {
-  const { selectedBrands, priceRange } = useFilters();
+  const { selectedBrands, priceRange, searchQuery } = useFilters();
 
   const filteredProducts = useMemo(() => {
     return products.filter((product) => {
+      // Search filter
+      if (
+        searchQuery &&
+        !product.name.toLowerCase().includes(searchQuery.toLowerCase())
+      ) {
+        return false;
+      }
+
       // Brand filter
-      if (selectedBrands.length > 0 && !selectedBrands.includes(product.brand)) {
+      if (
+        selectedBrands.length > 0 &&
+        !selectedBrands.includes(product.brand)
+      ) {
         return false;
       }
 
@@ -30,8 +41,7 @@ export function ProductGridClient({ products }: ProductGridClientProps) {
 
       return true;
     });
-  }, [products, selectedBrands, priceRange]);
+  }, [products, selectedBrands, priceRange, searchQuery]);
 
   return <ProductGrid products={filteredProducts} />;
 }
-
